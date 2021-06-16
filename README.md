@@ -1,5 +1,7 @@
 # QRコード認識Reactコンポーネント
 
+
+
 ![qr-reader.png](./img/qr-reader.png)
 
 ## 前書き
@@ -120,6 +122,34 @@ export type QRReaderProps = {
 
 ## 利用方法
 
+* コンポーネントのサイズと(width, height)と、読み取り状態(pause)に初期値をセットします。
+
+```typescript
+  const [qrParam, setQRParam] = useState({
+    width: 500,
+    height: 500,
+    pause: true,
+  });
+```
+
+* `onRecognizeCode()`で認識されたQRコードを取得し、読み取りを停止します。
+
+```typescript
+  const onRecognizeCode = (e: QRCode) => {
+    setCode(e.data);
+    if (stopOnRecognize) {
+      setQRParam( e => { return {...e, pause: true}; });
+    }
+  }`
+```
+
+* `toggleVideoStream()`で停止と再開を切り替えます
+
+```typescript
+  const toggleVideoStream = () => {
+    setQRParam( e => { return {...e, pause: !e.pause}; });
+  }
+```
 
 ```typescript
 import React, { useState } from 'react';
