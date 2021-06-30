@@ -4,7 +4,7 @@
 
 ![qr-reader.png](./img/qr-reader.png)
 
-## 前書き
+## はじめに
 
 ブラウザでQRコードの認識できるのか？と調べたところ、[jsqr](https://www.npmjs.com/package/jsqr)というライブラリで簡単に出来ることがわかりました。
 そのReact版です。
