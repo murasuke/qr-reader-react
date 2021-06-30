@@ -1,7 +1,7 @@
 # ワークフローの名前
-name: Release GitHub Page
+name: Release-GitHub-Page
 
-# 起動のタイミング
+# 起動のタイミング 
 # 今回はmasterブランチへのpush
 on:
   push:
