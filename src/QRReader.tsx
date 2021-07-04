@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes} from 'styled-components';
 import jsqr, { QRCode } from 'jsqr';
 export type { QRCode } from 'jsqr';
 
@@ -42,6 +42,20 @@ const OverlayDiv = styled.div<OverlayPosition>`
   left  : ${(props) => props.left}px;
   width : ${(props) => props.width}px;
   height: ${(props) => props.height}px;
+`;
+
+const QRScanerFrames = keyframes`
+  from {
+    height: 0px;
+  }
+  to {
+    height: 500px;
+  }
+`;
+
+const QRScanerBar = styled.div`
+  animation: ${QRScanerFrames} infinite  2s alternate both ease-in-out;
+  border: 1px solid #0F0;
 `;
 
 
@@ -109,6 +123,7 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
     <RelativeWrapperDiv {...props}>
       <VideoArea ref={video}></VideoArea>
       <OverlayDiv {...overlay}></OverlayDiv>
+      <QRScanerBar></QRScanerBar>
     </RelativeWrapperDiv>    
   );
 }
