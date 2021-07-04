@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes} from 'styled-components';
-import jsqr, { QRCode } from 'jsqr';
+import Worker from './worker';
+import { QRCode } from 'jsqr';
 export type { QRCode } from 'jsqr';
+
 
 export type QRReaderProps = {
   width?: number,
@@ -63,6 +65,7 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
   const [overlay, setOverlay] = useState({ top:0, left: 0, width: 0, height: 0 });  
   const video = useRef(null as HTMLVideoElement);
   const timerId = useRef(null);
+  const worker = new Worker();
 
   const drawRect = (topLeft: Point, bottomRight: Point) => {
     setOverlay({
@@ -103,7 +106,7 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
         timerId.current = setInterval(() => {
           context.drawImage(video.current, 0, 0, width, height);
           const imageData = context.getImageData(0, 0, width, height);
-          const qr = jsqr(imageData.data, imageData.width, imageData.height);
+          worker.processData(imageData).then(qr => {
           if (qr) {
             console.log(qr.data);
             if (props.showQRFrame) {
@@ -111,13 +114,13 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
             }
             if (props.onRecognizeCode) props.onRecognizeCode(qr);               
           }
+          });
         }, props.timerInterval);
       }
       return () => clearInterval(timerId.current);
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
-
-
 
   return (    
     <RelativeWrapperDiv {...props}>
