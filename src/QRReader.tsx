@@ -9,7 +9,7 @@ export type QRReaderProps = {
   pause?: boolean,
   showQRFrame?: boolean,
   timerInterval?: number,
-  onRecognizeCode?: (e: QRCode) => void,
+  gecognizeCallback?: (e: QRCode) => void,
 }
 
 type Point = {
@@ -52,10 +52,10 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
 
   const drawRect = (topLeft: Point, bottomRight: Point) => {
     setOverlay({
-      top: topLeft.y,
-      left: topLeft.x,
-      width: bottomRight.x - topLeft.x,
-      height: bottomRight.y - topLeft.y,
+      top: topLeft.y < bottomRight.y ? topLeft.y : bottomRight.y,
+      left: topLeft.x < bottomRight.x ? topLeft.x :bottomRight.x,
+      width: Math.abs(bottomRight.x - topLeft.x),
+      height: Math.abs(bottomRight.y - topLeft.y),
     });
   };
 
@@ -95,7 +95,7 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
             if (props.showQRFrame) {
               drawRect(qr.location.topLeftCorner, qr.location.bottomRightCorner);
             }
-            if (props.onRecognizeCode) props.onRecognizeCode(qr);               
+            if (props.gecognizeCallback) props.gecognizeCallback(qr);               
           }
         }, props.timerInterval);
       }
