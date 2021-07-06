@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styled, { keyframes} from 'styled-components';
 import Worker from './worker';
 import { QRCode } from 'jsqr';
@@ -11,7 +11,7 @@ export type QRReaderProps = {
   pause?: boolean,
   showQRFrame?: boolean,
   timerInterval?: number,
-  onRecognizeCode?: (e: QRCode) => void,
+  gecognizeCallback?: (e: QRCode) => void,
 }
 
 type Point = {
@@ -48,16 +48,16 @@ const OverlayDiv = styled.div<OverlayPosition>`
 
 const QRScanerFrames = keyframes`
   from {
-    height: 0px;
+    height: 10px;
   }
   to {
-    height: 500px;
+    height: 98%;
   }
 `;
 
 const QRScanerBar = styled.div`
-  animation: ${QRScanerFrames} infinite  2s alternate both ease-in-out;
-  border: 1px solid #0F0;
+  animation: ${QRScanerFrames} infinite  1300ms alternate both ease-in-out;
+  border-bottom: 1px solid #0F0;
 `;
 
 
@@ -65,14 +65,14 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
   const [overlay, setOverlay] = useState({ top:0, left: 0, width: 0, height: 0 });  
   const video = useRef(null as HTMLVideoElement);
   const timerId = useRef(null);
-  const worker = new Worker();
+  const worker = useMemo(() => new Worker(),[]);
 
   const drawRect = (topLeft: Point, bottomRight: Point) => {
     setOverlay({
-      top: topLeft.y,
-      left: topLeft.x,
-      width: bottomRight.x - topLeft.x,
-      height: bottomRight.y - topLeft.y,
+      top: topLeft.y < bottomRight.y ? topLeft.y : bottomRight.y,
+      left: topLeft.x < bottomRight.x ? topLeft.x :bottomRight.x,
+      width: Math.abs(bottomRight.x - topLeft.x),
+      height: Math.abs(bottomRight.y - topLeft.y),
     });
   };
 
@@ -112,7 +112,7 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
             if (props.showQRFrame) {
               drawRect(qr.location.topLeftCorner, qr.location.bottomRightCorner);
             }
-            if (props.onRecognizeCode) props.onRecognizeCode(qr);               
+            if (props.gecognizeCallback) props.gecognizeCallback(qr);               
           }
           });
         }, props.timerInterval);
